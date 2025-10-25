@@ -8,6 +8,7 @@ import '../../features/user/data/datasources/user_remote_datasource.dart';
 import '../../features/user/data/repositories/user_repository_impl.dart';
 import '../../features/user/domain/repository/user_repository.dart';
 import '../../features/user/domain/usecases/search_users.dart';
+import '../../features/user/presentation/bloc/user_bloc.dart';
 import '../network/dio_client.dart';
 import '../network/network_info.dart';
 
