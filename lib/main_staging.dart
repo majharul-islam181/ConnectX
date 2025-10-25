@@ -13,7 +13,7 @@ void main() async {
   // Configure Staging Flavor
   AppFlavor.instance.set(
     flavor: AppFlavorType.staging,
-    values: const AppFlavorValues(
+    values:  AppFlavorValues(
       baseUrl: AppConstants.baseUrl,
       appName: 'ConnectX [STAGING]',
       enableLogging: true,

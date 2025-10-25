@@ -1,22 +1,23 @@
+import '../../environment_config.dart';
+
 class AppConstants {
-  // API Constants
-  static const String baseUrl = 'https://reqres.in/api';
-  static const String usersEndpoint = '/users';
-  static const int defaultPerPage = 10;
-  static const int maxRetryCount = 3;
-  static const Duration apiTimeout = Duration(seconds: 30);
-  static const Duration connectTimeout = Duration(seconds: 15);
-  static const Duration receiveTimeout = Duration(seconds: 30);
+  // API Constants (Now using EnvironmentConfig)
+  static String get baseUrl => EnvironmentConfig.instance.apiBaseUrl;
+  static String get apiKey => EnvironmentConfig.instance.apiKey;
+  static String get apiVersion => EnvironmentConfig.instance.apiVersion;
+  static String get usersEndpoint => '/users';
+  
+  // Dynamic constants from environment
+  static int get defaultPerPage => EnvironmentConfig.instance.itemsPerPage;
+  static int get maxRetryCount => EnvironmentConfig.instance.maxRetryCount;
+  static Duration get apiTimeout => EnvironmentConfig.instance.receiveTimeout;
+  static Duration get connectTimeout => EnvironmentConfig.instance.connectionTimeout;
+  static Duration get receiveTimeout => EnvironmentConfig.instance.receiveTimeout;
+  static Duration get cacheValidDuration => EnvironmentConfig.instance.cacheDuration;
 
-  // Pagination Constants
+  // Static constants (unchanged)
   static const int initialPage = 1;
-  static const int itemsPerPage = 10;
-
-  // Cache Constants
-  static const String usersCacheKey = 'users_cache';
-  static const String userCachePrefix = 'user_';
-  static const Duration cacheValidDuration = Duration(hours: 1);
-  static const int maxCacheSize = 100;
+  static const int itemsPerPage = 10; // Fallback value
 
   // Animation Constants
   static const Duration shortAnimationDuration = Duration(milliseconds: 200);
@@ -40,14 +41,15 @@ class AppConstants {
   static const String unknownErrorMessage = 'An unexpected error occurred. Please try again.';
   static const String noDataMessage = 'No users found.';
   static const String loadingMessage = 'Loading...';
+  static const String apiKeyMissingMessage = 'API key is required but not found.';
 
   // Success Messages
   static const String dataLoadedMessage = 'Data loaded successfully.';
   static const String refreshSuccessMessage = 'Data refreshed successfully.';
 
-  // App Info
-  static const String appName = 'ConnectX';
-  static const String appVersion = '1.0.0';
+  // App Info (Now using EnvironmentConfig)
+  static String get appName => EnvironmentConfig.instance.appName;
+  static String get appVersion => EnvironmentConfig.instance.appVersion;
   static const String appDescription = 'Connect with People';
 
   // Hive Box Names
@@ -59,6 +61,7 @@ class AppConstants {
   static const String firstLaunchKey = 'first_launch';
   static const String themeKey = 'theme_mode';
   static const String lastSyncKey = 'last_sync';
+  static const String apiKeyKey = 'api_key';
 
   // Network Status
   static const String connectionStatusKey = 'connection_status';
@@ -80,16 +83,49 @@ class AppConstants {
   static const String androidPackageName = 'com.connectx.app';
   static const String iosAppId = 'com.connectx.app';
 
-  // Feature Flags
-  static const bool enablePullToRefresh = true;
-  static const bool enableInfiniteScroll = true;
-  static const bool enableOfflineMode = true;
-  static const bool enableCaching = true;
-  static const bool enableAnalytics = false;
+  // Feature Flags (Now using EnvironmentConfig)
+  static bool get enablePullToRefresh => true;
+  static bool get enableInfiniteScroll => true;
+  static bool get enableOfflineMode => true;
+  static bool get enableCaching => true;
+  static bool get enableAnalytics => EnvironmentConfig.instance.enableAnalytics;
+  static bool get enableLogging => EnvironmentConfig.instance.enableLogging;
 
   // Logging
-  static const bool enableLogging = true;
   static const String logTag = 'ConnectX';
+
+  // API Headers
+  static Map<String, String> get defaultHeaders => {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'X-API-Key': apiKey,
+    'X-API-Version': apiVersion,
+  };
+
+  // Environment-specific getters
+  static bool get isDevelopment {
+    try {
+      return EnvironmentConfig.instance.environment == 'development';
+    } catch (e) {
+      return true; // Default to development if not initialized
+    }
+  }
+
+  static bool get isStaging {
+    try {
+      return EnvironmentConfig.instance.environment == 'staging';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static bool get isProduction {
+    try {
+      return EnvironmentConfig.instance.environment == 'production';
+    } catch (e) {
+      return false;
+    }
+  }
 
   // Private constructor to prevent instantiation
   AppConstants._();

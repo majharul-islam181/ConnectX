@@ -11,7 +11,7 @@ void main() async {
   
   AppFlavor.instance.set(
     flavor: AppFlavorType.production,
-    values: const AppFlavorValues(
+    values:  AppFlavorValues(
       baseUrl: AppConstants.baseUrl,
       appName: 'ConnectX',
       enableLogging: false,

@@ -14,7 +14,7 @@ void main() async {
   // Configure Development Flavor
   AppFlavor.instance.set(
     flavor: AppFlavorType.development,
-    values: const AppFlavorValues(
+    values:  AppFlavorValues(
       baseUrl: AppConstants.baseUrl,
       appName: 'ConnectX [DEV]',
       enableLogging: true,
