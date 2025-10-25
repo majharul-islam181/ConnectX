@@ -10,8 +10,10 @@ abstract class UserRepository {
     required int perPage,
   });
 
+  /// Get user by ID
   Future<Either<Failure, UserEntity>> getUserById(int id);
 
+  /// Search users by name (local search from cached data)
   Future<Either<Failure, List<UserEntity>>> searchUsers(String query);
 
   /// Get cached users for offline access

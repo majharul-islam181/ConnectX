@@ -1,6 +1,8 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'core/config/app_flavor.dart';
 import 'core/utils/logger.dart';
+
 
 class EnvironmentConfig {
   static EnvironmentConfig? _instance;
@@ -21,18 +23,18 @@ class EnvironmentConfig {
       final envFile = _getEnvFileName();
       await dotenv.load(fileName: envFile);
       _isInitialized = true;
-
+      
       AppLogger.info('Environment config loaded from: $envFile');
-      AppLogger.debug('API Base URL: $apiBaseUrl');
-      AppLogger.debug('Environment: $environment');
-      AppLogger.debug('Logging enabled: $enableLogging');
+      AppLogger.debug('API Base URL: ${apiBaseUrl}');
+      AppLogger.debug('Environment: ${environment}');
+      AppLogger.debug('Logging enabled: ${enableLogging}');
     } catch (e, stackTrace) {
       AppLogger.error(
         'Failed to load environment configuration',
         error: e,
         stackTrace: stackTrace,
       );
-
+      
       // Fallback to loading default .env file
       try {
         await dotenv.load(fileName: '.env');
@@ -84,7 +86,8 @@ class EnvironmentConfig {
     _ensureInitialized();
     final key = dotenv.env['API_KEY'];
     if (key == null || key.isEmpty) {
-      throw StateError('API_KEY not found in environment configuration');
+      AppLogger.warning('API_KEY not found in environment configuration, using default');
+      return 'reqres-free-v1'; // Default API key for reqres.in
     }
     return key;
   }
@@ -157,22 +160,19 @@ class EnvironmentConfig {
   // Network Configuration
   Duration get connectionTimeout {
     _ensureInitialized();
-    final seconds =
-        int.tryParse(dotenv.env['CONNECTION_TIMEOUT_SECONDS'] ?? '30') ?? 30;
+    final seconds = int.tryParse(dotenv.env['CONNECTION_TIMEOUT_SECONDS'] ?? '30') ?? 30;
     return Duration(seconds: seconds);
   }
 
   Duration get receiveTimeout {
     _ensureInitialized();
-    final seconds =
-        int.tryParse(dotenv.env['RECEIVE_TIMEOUT_SECONDS'] ?? '30') ?? 30;
+    final seconds = int.tryParse(dotenv.env['RECEIVE_TIMEOUT_SECONDS'] ?? '30') ?? 30;
     return Duration(seconds: seconds);
   }
 
   Duration get sendTimeout {
     _ensureInitialized();
-    final seconds =
-        int.tryParse(dotenv.env['SEND_TIMEOUT_SECONDS'] ?? '30') ?? 30;
+    final seconds = int.tryParse(dotenv.env['SEND_TIMEOUT_SECONDS'] ?? '30') ?? 30;
     return Duration(seconds: seconds);
   }
 
@@ -212,8 +212,7 @@ class EnvironmentConfig {
     AppLogger.debug('App Name: $appName');
     AppLogger.debug('App Version: $appVersion');
     AppLogger.debug('API Base URL: $apiBaseUrl');
-    AppLogger.debug(
-        'API Key: ${apiKey.isNotEmpty ? '***${apiKey.substring(apiKey.length - 4)}' : 'Not set'}');
+    AppLogger.debug('API Key: ${apiKey.length > 0 ? '***${apiKey.substring(apiKey.length - 4)}' : 'Not set'}');
     AppLogger.debug('API Version: $apiVersion');
     AppLogger.debug('Enable Logging: $enableLogging');
     AppLogger.debug('Enable Analytics: $enableAnalytics');

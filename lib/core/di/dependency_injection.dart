@@ -7,6 +7,9 @@ import '../../features/user/data/datasources/user_local_datasource.dart';
 import '../../features/user/data/datasources/user_remote_datasource.dart';
 import '../../features/user/data/repositories/user_repository_impl.dart';
 import '../../features/user/domain/repository/user_repository.dart';
+import '../../features/user/domain/usecases/get_user_detail.dart';
+import '../../features/user/domain/usecases/get_users.dart';
+import '../../features/user/domain/usecases/refresh_users.dart';
 import '../../features/user/domain/usecases/search_users.dart';
 import '../../features/user/presentation/bloc/user_bloc.dart';
 import '../network/dio_client.dart';
@@ -60,6 +63,10 @@ Future<void> initializeDependencies() async {
   getIt.registerLazySingleton<SearchUsers>(
     () => SearchUsers(getIt<UserRepository>()),
   );
+  
+  getIt.registerLazySingleton<RefreshUsers>(
+    () => RefreshUsers(getIt<UserRepository>()),
+  );
 
   // Blocs
   getIt.registerFactory<UserBloc>(
@@ -67,11 +74,8 @@ Future<void> initializeDependencies() async {
       getUsers: getIt<GetUsers>(),
       getUserDetail: getIt<GetUserDetail>(),
       searchUsers: getIt<SearchUsers>(),
+      refreshUsers: getIt<RefreshUsers>(),
     ),
-  );
-  
-  getIt.registerFactory<ConnectivityBloc>(
-    () => ConnectivityBloc(getIt<NetworkInfo>()),
   );
 }
 

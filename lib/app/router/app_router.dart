@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../features/user/domain/entites/user_entity.dart';
+import '../../features/user/presentation/pages/splash_page.dart';
+import '../../features/user/presentation/pages/user_detail_page.dart';
+import '../../features/user/presentation/pages/user_list_page.dart';
+
+
 
 class AppRouter {
   // Route names
   static const String splash = '/';
   static const String userList = '/users';
-  static const String userDetail = '/user-detail';
+  static const String userDetail = '/user'; // Changed to support path parameters
 
   // GoRouter configuration
   static final GoRouter router = GoRouter(
@@ -25,17 +31,26 @@ class AppRouter {
         builder: (context, state) => const UserListPage(),
       ),
       
-      // User Detail Screen
+      // User Detail Screen with userId parameter
       GoRoute(
-        path: userDetail,
+        path: '$userDetail/:userId',
         name: 'userDetail',
         builder: (context, state) {
-          final user = state.extra as UserEntity?;
-          if (user == null) {
-            // If no user is passed, redirect to user list
+          final userIdString = state.pathParameters['userId'];
+          final userId = int.tryParse(userIdString ?? '');
+          
+          if (userId == null) {
+            // If invalid userId, redirect to user list
             return const UserListPage();
           }
-          return UserDetailPage(user: user);
+          
+          // Check if user object was passed as extra
+          final user = state.extra as UserEntity?;
+          
+          return UserDetailPage(
+            userId: userId,
+            user: user, // Pass user object if available
+          );
         },
       ),
     ],
@@ -98,12 +113,21 @@ class AppRouter {
     context.go(userList);
   }
   
-  static void goToUserDetail(BuildContext context, UserEntity user) {
-    context.go(userDetail, extra: user);
+  static void goToUserDetail(BuildContext context, int userId, {UserEntity? user}) {
+    context.go('$userDetail/$userId', extra: user);
   }
   
-  static void pushUserDetail(BuildContext context, UserEntity user) {
-    context.push(userDetail, extra: user);
+  static void pushUserDetail(BuildContext context, int userId, {UserEntity? user}) {
+    context.push('$userDetail/$userId', extra: user);
+  }
+  
+  // Navigate to user detail with UserEntity (extracts userId)
+  static void goToUserDetailWithEntity(BuildContext context, UserEntity user) {
+    context.go('$userDetail/${user.id}', extra: user);
+  }
+  
+  static void pushUserDetailWithEntity(BuildContext context, UserEntity user) {
+    context.push('$userDetail/${user.id}', extra: user);
   }
   
   // Pop navigation

@@ -6,6 +6,7 @@ import '../entites/pagination_entity.dart';
 import '../entites/user_entity.dart';
 import '../repository/user_repository.dart';
 
+
 class RefreshUsers implements UseCase<PaginationEntity<UserEntity>, PaginationParams> {
   final UserRepository repository;
 

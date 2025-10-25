@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../core/config/app_flavor.dart';
+import '../core/di/dependency_injection.dart';
+import '../features/user/presentation/bloc/user_bloc.dart';
 import 'router/app_router.dart';
 import 'theme/app_theme.dart';
 
@@ -16,9 +18,9 @@ class ConnectXApp extends StatelessWidget {
         BlocProvider<UserBloc>(
           create: (context) => getIt<UserBloc>(),
         ),
-        BlocProvider<ConnectivityBloc>(
-          create: (context) => getIt<ConnectivityBloc>()..add(ConnectivityStarted()),
-        ),
+        // BlocProvider<ConnectivityBloc>(
+        //   create: (context) => getIt<ConnectivityBloc>()..add(ConnectivityStarted()),
+        // ),
       ],
       child: MaterialApp.router(
         title: _getAppTitle(),

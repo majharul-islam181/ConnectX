@@ -1,22 +1,14 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:connectx_app/core/constants/app_constants.dart';
-import 'package:connectx_app/core/errors/failures.dart';
-import 'package:connectx_app/core/usecases/usecase.dart';
-import 'package:connectx_app/core/utils/logger.dart';
-import 'package:connectx_app/features/user/domain/entities/user_entity.dart';
-import 'package:connectx_app/features/user/domain/entities/pagination_entity.dart';
-import 'package:connectx_app/features/user/domain/usecases/get_users.dart';
-import 'package:connectx_app/features/user/domain/usecases/get_user_detail.dart';
-import 'package:connectx_app/features/user/domain/usecases/search_users.dart';
-import 'package:connectx_app/features/user/domain/usecases/refresh_users.dart';
-import 'package:connectx_app/features/user/presentation/bloc/user_event.dart';
-import 'package:connectx_app/features/user/presentation/bloc/user_state.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/errors/failures.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../../../core/utils/logger.dart';
+import '../../domain/entites/pagination_entity.dart';
 import '../../domain/entites/user_entity.dart';
+import '../../domain/usecases/get_user_detail.dart';
+import '../../domain/usecases/get_users.dart';
 import '../../domain/usecases/refresh_users.dart';
 import '../../domain/usecases/search_users.dart';
 import 'user_event.dart';
@@ -63,10 +55,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   /// Load initial users or refresh
-  Future<void> _onLoadUsers(LoadUsersEvent event, Emitter<UserState> emit) async {
+  Future<void> _onLoadUsers(
+      LoadUsersEvent event, Emitter<UserState> emit) async {
     try {
-      AppLogger.bloc('UserBloc', 'LoadUsersEvent', {'refresh': event.refresh});
-
+   
       if (event.refresh) {
         // Reset pagination for refresh
         _currentPage = 1;
@@ -114,7 +106,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         },
       );
     } catch (e, stackTrace) {
-      AppLogger.error('Unexpected error in LoadUsersEvent', error: e, stackTrace: stackTrace);
+      AppLogger.error('Unexpected error in LoadUsersEvent',
+          error: e, stackTrace: stackTrace);
       emit(UserErrorState(
         message: 'An unexpected error occurred. Please try again.',
         canRetry: true,
@@ -124,9 +117,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   /// Load more users for infinite scrolling
-  Future<void> _onLoadMoreUsers(LoadMoreUsersEvent event, Emitter<UserState> emit) async {
+  Future<void> _onLoadMoreUsers(
+      LoadMoreUsersEvent event, Emitter<UserState> emit) async {
     try {
-      AppLogger.bloc('UserBloc', 'LoadMoreUsersEvent', {'currentPage': _currentPage});
 
       if (_hasReachedMax) {
         AppLogger.debug('Already reached max pages, ignoring load more');
@@ -174,7 +167,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         );
       }
     } catch (e, stackTrace) {
-      AppLogger.error('Unexpected error in LoadMoreUsersEvent', error: e, stackTrace: stackTrace);
+      AppLogger.error('Unexpected error in LoadMoreUsersEvent',
+          error: e, stackTrace: stackTrace);
       final currentState = state;
       if (currentState is UsersLoadedState) {
         emit(currentState.copyWith(isLoadingMore: false));
@@ -188,9 +182,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   /// Search users with debouncing
-  Future<void> _onSearchUsers(SearchUsersEvent event, Emitter<UserState> emit) async {
+  Future<void> _onSearchUsers(
+      SearchUsersEvent event, Emitter<UserState> emit) async {
     try {
-      AppLogger.bloc('UserBloc', 'SearchUsersEvent', {'query': event.query});
 
       _currentSearchQuery = event.query;
 
@@ -224,7 +218,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         }
       });
     } catch (e, stackTrace) {
-      AppLogger.error('Unexpected error in SearchUsersEvent', error: e, stackTrace: stackTrace);
+      AppLogger.error('Unexpected error in SearchUsersEvent',
+          error: e, stackTrace: stackTrace);
       emit(UserErrorState(
         message: 'Search failed. Please try again.',
         canRetry: true,
@@ -248,7 +243,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           ));
         },
         (searchResults) {
-          AppLogger.info('Search completed: ${searchResults.length} results for "$query"');
+          AppLogger.info(
+              'Search completed: ${searchResults.length} results for "$query"');
 
           if (searchResults.isEmpty) {
             emit(UserEmptyState(
@@ -265,7 +261,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         },
       );
     } catch (e, stackTrace) {
-      AppLogger.error('Unexpected error during search', error: e, stackTrace: stackTrace);
+      AppLogger.error('Unexpected error during search',
+          error: e, stackTrace: stackTrace);
       emit(UserErrorState(
         message: 'Search failed. Please try again.',
         canRetry: true,
@@ -275,9 +272,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   /// Clear search and return to normal list
-  Future<void> _onClearSearch(ClearSearchEvent event, Emitter<UserState> emit) async {
+  Future<void> _onClearSearch(
+      ClearSearchEvent event, Emitter<UserState> emit) async {
     try {
-      AppLogger.bloc('UserBloc', 'ClearSearchEvent', {});
+
 
       _currentSearchQuery = '';
       _searchDebounceTimer?.cancel();
@@ -302,7 +300,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         add(const LoadUsersEvent());
       }
     } catch (e, stackTrace) {
-      AppLogger.error('Unexpected error in ClearSearchEvent', error: e, stackTrace: stackTrace);
+      AppLogger.error('Unexpected error in ClearSearchEvent',
+          error: e, stackTrace: stackTrace);
       emit(UserErrorState(
         message: 'Failed to clear search. Please try again.',
         canRetry: true,
@@ -312,9 +311,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   /// Load user detail
-  Future<void> _onLoadUserDetail(LoadUserDetailEvent event, Emitter<UserState> emit) async {
+  Future<void> _onLoadUserDetail(
+      LoadUserDetailEvent event, Emitter<UserState> emit) async {
     try {
-      AppLogger.bloc('UserBloc', 'LoadUserDetailEvent', {'userId': event.userId});
 
       emit(UserDetailLoadingState(event.userId));
 
@@ -335,7 +334,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         },
       );
     } catch (e, stackTrace) {
-      AppLogger.error('Unexpected error in LoadUserDetailEvent', error: e, stackTrace: stackTrace);
+      AppLogger.error('Unexpected error in LoadUserDetailEvent',
+          error: e, stackTrace: stackTrace);
       emit(UserErrorState(
         message: 'Failed to load user details. Please try again.',
         canRetry: true,
@@ -345,9 +345,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   /// Refresh users (pull-to-refresh)
-  Future<void> _onRefreshUsers(RefreshUsersEvent event, Emitter<UserState> emit) async {
+  Future<void> _onRefreshUsers(
+      RefreshUsersEvent event, Emitter<UserState> emit) async {
     try {
-      AppLogger.bloc('UserBloc', 'RefreshUsersEvent', {});
 
       // Reset pagination
       _currentPage = 1;
@@ -373,7 +373,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           _hasReachedMax = !paginationEntity.hasMorePages;
           _allUsers = paginationEntity.data;
 
-          AppLogger.info('Users refreshed successfully: ${_allUsers.length} users');
+          AppLogger.info(
+              'Users refreshed successfully: ${_allUsers.length} users');
 
           emit(UsersLoadedState(
             users: List.from(_allUsers),
@@ -383,7 +384,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         },
       );
     } catch (e, stackTrace) {
-      AppLogger.error('Unexpected error in RefreshUsersEvent', error: e, stackTrace: stackTrace);
+      AppLogger.error('Unexpected error in RefreshUsersEvent',
+          error: e, stackTrace: stackTrace);
       emit(UserErrorState(
         message: 'Failed to refresh. Please try again.',
         canRetry: true,
@@ -395,18 +397,19 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   /// Retry last failed operation
   Future<void> _onRetry(RetryEvent event, Emitter<UserState> emit) async {
     try {
-      AppLogger.bloc('UserBloc', 'RetryEvent', {});
-
+   
       final currentState = state;
       if (currentState is UserErrorState && currentState.lastEvent != null) {
-        AppLogger.info('Retrying last event: ${currentState.lastEvent.runtimeType}');
+        AppLogger.info(
+            'Retrying last event: ${currentState.lastEvent.runtimeType}');
         add(currentState.lastEvent!);
       } else {
         // Default retry behavior - reload users
         add(const LoadUsersEvent());
       }
     } catch (e, stackTrace) {
-      AppLogger.error('Unexpected error in RetryEvent', error: e, stackTrace: stackTrace);
+      AppLogger.error('Unexpected error in RetryEvent',
+          error: e, stackTrace: stackTrace);
       emit(UserErrorState(
         message: 'Retry failed. Please try again.',
         canRetry: true,
@@ -416,9 +419,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   /// Reset user detail state
-  Future<void> _onResetUserDetail(ResetUserDetailEvent event, Emitter<UserState> emit) async {
+  Future<void> _onResetUserDetail(
+      ResetUserDetailEvent event, Emitter<UserState> emit) async {
     try {
-      AppLogger.bloc('UserBloc', 'ResetUserDetailEvent', {});
+
 
       // Return to previous state or initial state
       if (_allUsers.isNotEmpty) {
@@ -439,7 +443,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         emit(const UserInitialState());
       }
     } catch (e, stackTrace) {
-      AppLogger.error('Unexpected error in ResetUserDetailEvent', error: e, stackTrace: stackTrace);
+      AppLogger.error('Unexpected error in ResetUserDetailEvent',
+          error: e, stackTrace: stackTrace);
       emit(const UserInitialState());
     }
   }

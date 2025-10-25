@@ -10,11 +10,12 @@ void main() async {
   // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Configure Default Flavor (Development)
   AppFlavor.instance.set(
     flavor: AppFlavorType.development,
     values: const AppFlavorValues(
-      baseUrl: 'https://reqres.in/api', 
-      appName: 'ConnectX',
+      baseUrl: 'https://reqres.in/api', // Will be overridden by environment config
+      appName: 'ConnectX', // Will be overridden by environment config
       enableLogging: true,
       showFlavorBanner: false,
       enableAnalytics: false,
@@ -55,7 +56,14 @@ void main() async {
     await initializeDependencies();
     AppLogger.info('📱 ConnectX app initialization completed successfully');
     AppLogger.debug('Environment: ${EnvironmentConfig.instance.environment}');
-    AppLogger.debug('API Key configured: ${EnvironmentConfig.instance.apiKey.isNotEmpty}');
+    
+    // Safely check API key
+    try {
+      final apiKey = EnvironmentConfig.instance.apiKey;
+      AppLogger.debug('API Key configured: ${apiKey.isNotEmpty}');
+    } catch (e) {
+      AppLogger.warning('Could not check API key: $e');
+    }
   } catch (e, stackTrace) {
     AppLogger.fatal(
       'Failed to initialize ConnectX app',
