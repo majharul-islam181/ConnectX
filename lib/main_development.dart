@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_flavor/flutter_flavor.dart';
 import 'app/app.dart';
 import 'core/config/app_flavor.dart';
 import 'core/constants/app_constants.dart';
@@ -7,28 +8,29 @@ import 'core/di/dependency_injection.dart';
 import 'core/utils/logger.dart';
 
 void main() async {
+  // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Configure Default Flavor (Development)
+  // Configure Development Flavor
   AppFlavor.instance.set(
     flavor: AppFlavorType.development,
     values: const AppFlavorValues(
       baseUrl: AppConstants.baseUrl,
-      appName: 'ConnectX',
+      appName: 'ConnectX [DEV]',
       enableLogging: true,
-      showFlavorBanner: false,
+      showFlavorBanner: true,
       enableAnalytics: false,
       enableCrashlytics: false,
+      cacheValidDuration: Duration(minutes: 30),
+      itemsPerPage: 5,
     ),
   );
-
-  // Set preferred orientations
+  
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  // Set system UI overlay style
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -41,15 +43,23 @@ void main() async {
   // Initialize dependencies
   try {
     await initializeDependencies();
-    AppLogger.info('📱 ConnectX app initialization completed successfully');
-    AppLogger.debug('Environment: ${AppFlavor.instance.environmentName}');
+    AppLogger.info('🔧 Development mode initialized successfully');
+    AppLogger.debug('App Flavor: ${AppFlavor.instance.environmentName}');
+    AppLogger.debug('Base URL: ${AppFlavor.instance.values.baseUrl}');
+    AppLogger.debug('Logging: ${AppFlavor.instance.values.enableLogging}');
   } catch (e, stackTrace) {
     AppLogger.fatal(
-      'Failed to initialize ConnectX app',
+      'Failed to initialize app in development mode',
       error: e,
       stackTrace: stackTrace,
     );
   }
 
-  runApp(const ConnectXApp());
+  runApp(
+    FlavorBanner(
+      color: Colors.green,
+      location: BannerLocation.topStart,
+      child: const ConnectXApp(),
+    ),
+  );
 }

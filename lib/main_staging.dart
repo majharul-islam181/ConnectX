@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_flavor/flutter_flavor.dart';
 import 'app/app.dart';
 import 'core/config/app_flavor.dart';
 import 'core/constants/app_constants.dart';
@@ -9,26 +10,26 @@ import 'core/utils/logger.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Configure Default Flavor (Development)
+  // Configure Staging Flavor
   AppFlavor.instance.set(
-    flavor: AppFlavorType.development,
+    flavor: AppFlavorType.staging,
     values: const AppFlavorValues(
       baseUrl: AppConstants.baseUrl,
-      appName: 'ConnectX',
+      appName: 'ConnectX [STAGING]',
       enableLogging: true,
-      showFlavorBanner: false,
-      enableAnalytics: false,
-      enableCrashlytics: false,
+      showFlavorBanner: true,
+      enableAnalytics: true,
+      enableCrashlytics: true,
+      cacheValidDuration: Duration(minutes: 45),
+      itemsPerPage: 8,
     ),
   );
 
-  // Set preferred orientations
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  // Set system UI overlay style
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -41,15 +42,22 @@ void main() async {
   // Initialize dependencies
   try {
     await initializeDependencies();
-    AppLogger.info('📱 ConnectX app initialization completed successfully');
-    AppLogger.debug('Environment: ${AppFlavor.instance.environmentName}');
+    AppLogger.info('🧪 Staging mode initialized successfully');
+    AppLogger.debug('App Flavor: ${AppFlavor.instance.environmentName}');
+    AppLogger.debug('Base URL: ${AppFlavor.instance.values.baseUrl}');
   } catch (e, stackTrace) {
     AppLogger.fatal(
-      'Failed to initialize ConnectX app',
+      'Failed to initialize app in staging mode',
       error: e,
       stackTrace: stackTrace,
     );
   }
 
-  runApp(const ConnectXApp());
+  runApp(
+    const FlavorBanner(
+      color: Colors.orange,
+      location: BannerLocation.topStart,
+      child: ConnectXApp(),
+    ),
+  );
 }
