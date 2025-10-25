@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../domain/entites/user_entity.dart';
+import 'user_avatar_widget.dart';
 
 class UserListItemWidget extends StatelessWidget {
   final UserEntity user;
