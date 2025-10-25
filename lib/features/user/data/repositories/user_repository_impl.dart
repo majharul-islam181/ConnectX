@@ -9,6 +9,7 @@ import '../../domain/entites/user_entity.dart';
 import '../../domain/repository/user_repository.dart';
 import '../datasources/user_local_datasource.dart';
 import '../datasources/user_remote_datasource.dart';
+import '../models/user_model.dart';
 
 class UserRepositoryImpl implements UserRepository {
   final UserRemoteDataSource remoteDataSource;

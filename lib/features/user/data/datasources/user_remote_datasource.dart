@@ -4,6 +4,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
+import '../models/api_response_model.dart';
 
 abstract class UserRemoteDataSource {
   /// Fetch paginated users from API

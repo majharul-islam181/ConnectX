@@ -3,6 +3,10 @@ import 'package:dio/dio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../features/user/data/datasources/user_local_datasource.dart';
+import '../../features/user/data/datasources/user_remote_datasource.dart';
+import '../../features/user/data/repositories/user_repository_impl.dart';
+import '../../features/user/domain/repository/user_repository.dart';
 import '../network/dio_client.dart';
 import '../network/network_info.dart';
 
